@@ -1,9 +1,7 @@
+import HomePage from "./pages/HomePage";
+
 function App() {
-  return (
-    <>
-      <p className="p-40 flex align-items text-3xl font-bold underline">Hello World</p>
-    </>
-  );
+  return <HomePage />;
 }
 
 export default App;
