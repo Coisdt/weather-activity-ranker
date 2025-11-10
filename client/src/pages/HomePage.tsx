@@ -1,17 +1,12 @@
-import { useState } from "react";
 import SearchForm from "../components/SearchForm";
 import ActivityCard from "../components/ActivityCard";
 import { useActivityRankings } from "../hooks/useActivityRankings";
 import type { DayRanking } from "../types";
+import { useSearchCity } from "../hooks/useSearchCity";
 
 function HomePage() {
-  const [searchCity, setSearchCity] = useState("");
-
+  const { searchCity, handleSearch } = useSearchCity();
   const { loading, error, data, cityName } = useActivityRankings(searchCity);
-
-  const handleSearch = (city: string) => {
-    setSearchCity(city);
-  };
 
   return (
     <>
