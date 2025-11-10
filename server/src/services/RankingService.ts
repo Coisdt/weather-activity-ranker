@@ -6,13 +6,12 @@ import { scoreIndoorSightseeing } from "../scorers/IndoorScorer.js";
 import { ActivityType } from "../constants/ActivityType.js";
 
 /**
- * Transforms weather data into activity rankings for each day
- * @param weatherData - Raw weather data from the API
- * @returns Array of day rankings with scored activities
+ * Transforms array-based weather data into activity rankings for each day.
+ * Creates two data structures: `conditions` (for GraphQL response) and `dayData` (for scoring).
  */
 export const generateActivityRankings = (weatherData: WeatherData) => {
   return weatherData.time.map((date: string, index: number) => {
-    // Create single-day weather conditions
+    // GraphQL response format - keeps sunshine_duration as string (matches schema)
     const conditions = {
       time: weatherData.time[index]!,
       weather_code: weatherData.weather_code[index]!,
@@ -24,7 +23,8 @@ export const generateActivityRankings = (weatherData: WeatherData) => {
       sunshine_duration: weatherData.sunshine_duration[index]!,
     };
 
-    // Prepare day data for scoring
+    // Scorer format - parses sunshine_duration to number for calculations
+    // (WeatherService converts API numbers to strings for GraphQL schema compatibility)
     const dayData: DayWeatherData = {
       date,
       weather_code: weatherData.weather_code[index]!,
@@ -36,7 +36,6 @@ export const generateActivityRankings = (weatherData: WeatherData) => {
       sunshine_duration: parseFloat(weatherData.sunshine_duration[index]!),
     };
 
-    // Score each activity
     const skiingScore = scoreSkiing(dayData);
     const surfingScore = scoreSurfing(dayData);
     const outdoorScore = scoreOutdoorSightseeing(dayData);
