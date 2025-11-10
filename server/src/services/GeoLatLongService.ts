@@ -1,6 +1,16 @@
 import { z } from "zod";
 import { nominatimApiResponseSchema } from "../schemas/nominatim.js";
 
+/**
+ * Converts city name to coordinates using Nominatim geocoding API.
+ *
+ * ⚠️ Rate Limit: Nominatim requires max 1 request/second per IP.
+ * For production scale, implement request queuing or caching.
+ *
+ * @param city - City name to geocode
+ * @returns Coordinates { latitude, longitude }
+ * @throws Error if city not found or API fails
+ */
 export const getLongitudeAndLatitude = async (
   city: string
 ): Promise<{ latitude: number; longitude: number }> => {
@@ -24,6 +34,7 @@ export const getLongitudeAndLatitude = async (
 
     // Schema guarantees at least one result via .min(1)
     const first = data[0]!;
+    // Nominatim returns coordinates as strings, parse to numbers for API calls
     return {
       latitude: parseFloat(first.lat),
       longitude: parseFloat(first.lon),

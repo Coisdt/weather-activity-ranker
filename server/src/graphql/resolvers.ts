@@ -4,8 +4,8 @@ import { getWeatherData } from "../services/WeatherService.js";
 
 export const resolvers = {
   Query: {
-    activityRankings: async (_: any, { location }: { location: string }) => {
-      // 1. Get coordinates from Nominatim API // TODO: check reason for this API
+    activityRankings: async (_: null, { location }: { location: string }) => {
+      // 1. Get coordinates from Nominatim API (OpenStreetMap geocoding service)
       const coords = await getLongitudeAndLatitude(location);
 
       // 2. Fetch weather data from Open-Meteo API
@@ -23,4 +23,4 @@ export const resolvers = {
       };
     },
   },
-};  
+};

@@ -32,6 +32,7 @@ export const getWeatherData = async (
       precipitation_probability_max: data.daily.precipitation_probability_max,
       snowfall_sum: data.daily.snowfall_sum,
       wind_speed_10m_max: data.daily.wind_speed_10m_max,
+      // Convert to strings for GraphQL schema compatibility (schema expects String[])
       sunshine_duration: data.daily.sunshine_duration.map((d) => d.toString()),
     };
   } catch (error) {
