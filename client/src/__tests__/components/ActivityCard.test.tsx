@@ -33,8 +33,8 @@ describe("ActivityCard", () => {
     });
   });
 
-  describe("sorting", () => {
-    it("should sort activities by score descending", () => {
+  describe("display order", () => {
+    it("should display activities in the order provided (assumes pre-sorted by service layer)", () => {
       render(<ActivityCard ranking={mockDayRanking} />);
 
       const scoreElements = screen.getAllByText(/Score: \d+/);
@@ -43,6 +43,8 @@ describe("ActivityCard", () => {
         return match ? parseInt(match[1]) : 0;
       });
 
+      // Component displays activities in the order received
+      // Sorting is handled by the service layer (tested separately)
       expect(scores[0]).toBeGreaterThanOrEqual(scores[1]);
       expect(scores[1]).toBeGreaterThanOrEqual(scores[2]);
     });

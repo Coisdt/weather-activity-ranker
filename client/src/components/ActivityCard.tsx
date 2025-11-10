@@ -1,21 +1,10 @@
-import {
-  formatDate,
-  formatActivityName,
-  getScoreColorClasses, 
-} from "@/utils";
+import { formatDate, formatActivityName, getScoreColorClasses } from "@/utils";
+import type { DayRanking } from "@/types";
 
-const ActivityCard = (props: {
-  ranking: {
-    date: string;
-    activities: { activity: string; reason: string; score: number }[];
-  };
-}) => {
+const ActivityCard = (props: { ranking: DayRanking }) => {
   const { ranking } = props;
 
-  // Sort activities by score (highest first)
-  const sortedActivities = [...ranking.activities].sort(
-    (a, b) => b.score - a.score
-  );
+  const sortedActivities = ranking.activities;
 
   return (
     <div className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
