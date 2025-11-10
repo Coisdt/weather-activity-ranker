@@ -1,33 +1,30 @@
-import type { OpenMeteoApiResponse, WeatherData } from "../types/weather.js";
+import type { WeatherData } from "../types/weather.js";
+import { z } from "zod";
+import { openMeteoApiResponseSchema } from "../schemas/weather.js";
 
 export const getWeatherData = async (
   latitude: number,
   longitude: number
 ): Promise<WeatherData> => {
-  const dataURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weather_code,temperature_2m_max,precipitation_probability_max,snowfall_sum,wind_speed_10m_max,sunshine_duration`;
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weather_code,temperature_2m_max,precipitation_probability_max,snowfall_sum,wind_speed_10m_max,sunshine_duration`;
 
   try {
-    const response = await fetch(dataURL);
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
 
-    const data: OpenMeteoApiResponse =
-      (await response.json()) as OpenMeteoApiResponse;
+    const raw = await response.json();
+    const data = openMeteoApiResponseSchema.parse(raw);
 
     if (data.error) {
-      console.error("API Error:", data.error);
-      throw new Error(
-        `API Error: ${data.reason || JSON.stringify(data.error)}`
-      );
+      throw new Error(data.reason || "Open-Meteo API returned an error");
     }
 
     if (!data.daily) {
-      throw new Error(
-        `Invalid weather data response. Response keys: ${Object.keys(data).join(
-          ", "
-        )}`
-      );
+      throw new Error("Open-Meteo API response missing daily weather data");
     }
 
-    // Return the transformed/flattened structure
     return {
       time: data.daily.time,
       weather_code: data.daily.weather_code,
@@ -35,16 +32,19 @@ export const getWeatherData = async (
       precipitation_probability_max: data.daily.precipitation_probability_max,
       snowfall_sum: data.daily.snowfall_sum,
       wind_speed_10m_max: data.daily.wind_speed_10m_max,
-      sunshine_duration: data.daily.sunshine_duration.map((d: number) =>
-        d.toString()
-      ),
+      sunshine_duration: data.daily.sunshine_duration.map((d) => d.toString()),
     };
   } catch (error) {
-    console.error("Error fetching weather data:", error);
-    throw new Error(
-      `Failed to fetch weather data for latitude: ${latitude} and longitude: ${longitude}: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`
-    );
+    if (error instanceof z.ZodError) {
+      const details = error.errors
+        .map((e) => `${e.path.join(".")}: ${e.message}`)
+        .join(", ");
+      throw new Error(`Invalid Open-Meteo API response: ${details}`);
+    }
+    // Preserve original error for network/parsing issues
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error(`Unexpected error: ${String(error)}`);
   }
 };
