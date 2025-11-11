@@ -46,10 +46,7 @@ describe("getLongitudeAndLatitude", () => {
         ]);
 
       await expect(getLongitudeAndLatitude(city.name)).rejects.toThrow(
-        `Invalid Nominatim API response for "${city.name}"`
-      );
-      await expect(getLongitudeAndLatitude(city.name)).rejects.toThrow(
-        "Invalid coordinates"
+        /Invalid Nominatim API response.*Invalid coordinates/
       );
     });
 
