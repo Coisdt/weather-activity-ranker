@@ -89,7 +89,7 @@ jobs:
 
       - name: Deploy to Railway
         working-directory: ./server
-        run: railway up --detach
+        run: railway up --service ${{ secrets.RAILWAY_SERVICE_NAME }} --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
