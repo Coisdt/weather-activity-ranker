@@ -89,9 +89,7 @@ jobs:
 
       - name: Deploy to Railway
         working-directory: ./server
-        run: |
-          railway link ${{ secrets.RAILWAY_PROJECT_ID }} --non-interactive
-          railway up
+        run: railway up --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
