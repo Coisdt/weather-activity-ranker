@@ -87,24 +87,13 @@ jobs:
       - name: Install Railway CLI
         run: npm install -g @railway/cli
 
-      - name: Verify Railway Configuration
-        run: |
-          if [ -z "$RAILWAY_PROJECT_ID" ]; then
-            echo "Error: RAILWAY_PROJECT_ID is not set"
-            exit 1
-          fi
-          echo "Railway project ID configured (length: ${#RAILWAY_PROJECT_ID})"
-        env:
-          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
-
       - name: Deploy to Railway
         working-directory: ./server
         run: |
-          railway link --non-interactive
+          railway link ${{ secrets.RAILWAY_PROJECT_ID }} --non-interactive
           railway up
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
 
   # Frontend Deployment
   deploy-frontend:
