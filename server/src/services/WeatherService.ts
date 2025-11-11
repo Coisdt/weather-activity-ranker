@@ -9,7 +9,11 @@ export const getWeatherData = async (
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weather_code,temperature_2m_max,precipitation_probability_max,snowfall_sum,wind_speed_10m_max,sunshine_duration`;
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent": "WeatherActivityRanker/1.0",
+      },
+    });
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }

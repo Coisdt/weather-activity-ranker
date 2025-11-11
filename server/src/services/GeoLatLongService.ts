@@ -16,7 +16,12 @@ export const getLongitudeAndLatitude = async (
 ): Promise<{ latitude: number; longitude: number }> => {
   try {
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${city}&format=json`
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json`,
+      {
+        headers: {
+          "User-Agent": "WeatherActivityRanker/1.0 (contact: your-email@example.com)",
+        },
+      }
     );
 
     if (!response.ok) {
