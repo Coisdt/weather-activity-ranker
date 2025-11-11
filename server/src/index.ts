@@ -6,6 +6,8 @@ import { resolvers } from "./graphql/resolvers.js";
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  // Disable CSRF protection to allow cross-origin requests from Vercel
+  csrfPrevention: false,
 });
 
 const PORT = parseInt(process.env.PORT || "4000", 10);
