@@ -37,8 +37,23 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run security audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
       - name: Run tests
-        run: npm test
+        run: npm run test
+
+      - name: Run tests with coverage
+        run: npm run test -- --coverage
+
+      - name: Upload backend coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./server/coverage/coverage-final.json
+          flags: backend
+          name: backend-coverage
+        continue-on-error: true
 
       - name: Build
         run: npm run build
@@ -65,8 +80,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run security audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+      - name: Run linter
+        run: npm run lint
+
       - name: Run tests
-        run: npm test
+        run: npm run test -- run
+
+      - name: Run tests with coverage
+        run: npm run test -- run --coverage
+
+      - name: Upload frontend coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./client/coverage/coverage-final.json
+          flags: frontend
+          name: frontend-coverage
+        continue-on-error: true
 
       - name: Build
         run: npm run build
